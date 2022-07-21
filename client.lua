@@ -18,8 +18,9 @@ end
 
 local function CreateCricleThread()
     CreateThread(function()
+        local localPed = PlayerPedId()
         while GetGameTimer() < endTime do
-            local localPedCoords = _getEntityCoords(PlayerPedId())
+            local localPedCoords = _getEntityCoords(localPed)
             localPedCoords = vector3(localPedCoords.x, localPedCoords.y, localPedCoords.z - 0.1)
             local drawAlpha = _math_floor((endTime - GetGameTimer()) / drawDuration * 255)
             _DrawMarker(1, localPedCoords, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, lerpRange, lerpRange, 0.125, currentVoiceMode.color.r, currentVoiceMode.color.g, currentVoiceMode.color.b, drawAlpha, false, true, 2, nil, nil, false)
@@ -27,7 +28,6 @@ local function CreateCricleThread()
             lerpRange = Lerp(lerpRange, proximityRange, lerpSpeed)
             Wait(0)
         end
-        bThreadCreated = false
     end)
 end
 
@@ -39,8 +39,7 @@ end
 
 AddEventHandler("pma-voice:setTalkingMode", function()
     UpdateVoiceInfos()
-    if not (bThreadCreated) then
-        bThreadCreated = true
+    if not (GetGameTimer() >= endTime) then
         CreateCricleThread()
     end
     endTime = GetGameTimer() + drawDuration
