@@ -25,7 +25,7 @@ local function CreateCricleThread()
             local drawAlpha = _math_floor((endTime - GetGameTimer()) / drawDuration * 255)
             _DrawMarker(1, localPedCoords, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, lerpRange, lerpRange, 0.125, currentVoiceMode.color.r, currentVoiceMode.color.g, currentVoiceMode.color.b, drawAlpha, false, true, 2, nil, nil, false)
             _DrawMarker(1, localPedCoords, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, lerpRange, lerpRange, -0.125, currentVoiceMode.color.r, currentVoiceMode.color.g, currentVoiceMode.color.b, drawAlpha, false, true, 2, nil, nil, false)
-            lerpRange = Lerp(lerpRange, proximityRange, lerpSpeed)
+            lerpRange = Lerp(lerpRange, proximityRange * 2, lerpSpeed)
             Wait(0)
         end
     end)
