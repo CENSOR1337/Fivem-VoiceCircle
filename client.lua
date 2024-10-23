@@ -18,28 +18,30 @@ end
 
 local function CreateCricleThread()
     CreateThread(function()
-        local localPed = PlayerPedId()
         while GetGameTimer() < endTime do
-            local localPedCoords = _getEntityCoords(localPed)
+            local localPedCoords = _getEntityCoords(PlayerPedId())
             localPedCoords = vector3(localPedCoords.x, localPedCoords.y, localPedCoords.z - 0.1)
             local drawAlpha = _math_floor((endTime - GetGameTimer()) / drawDuration * 255)
             _DrawMarker(1, localPedCoords, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, lerpRange, lerpRange, 0.125, currentVoiceMode.color.r, currentVoiceMode.color.g, currentVoiceMode.color.b, drawAlpha, false, true, 2, nil, nil, false)
             _DrawMarker(1, localPedCoords, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, lerpRange, lerpRange, -0.125, currentVoiceMode.color.r, currentVoiceMode.color.g, currentVoiceMode.color.b, drawAlpha, false, true, 2, nil, nil, false)
-            lerpRange = Lerp(lerpRange, proximityRange * 2, lerpSpeed)
+            lerpRange = Lerp(lerpRange, proximityRange, lerpSpeed)
             Wait(0)
         end
+        bThreadCreated = false
     end)
 end
 
 local function UpdateVoiceInfos()
     local proximity = LocalPlayer.state.proximity
     currentVoiceMode = voiceModes[proximity.index]
-    proximityRange = proximity.distance
+    local dist = proximity.distance or 0.1
+    proximityRange = dist * 2
 end
 
 AddEventHandler("pma-voice:setTalkingMode", function()
     UpdateVoiceInfos()
-    if not (GetGameTimer() >= endTime) then
+    if not (bThreadCreated) then
+        bThreadCreated = true
         CreateCricleThread()
     end
     endTime = GetGameTimer() + drawDuration
